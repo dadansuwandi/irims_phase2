@@ -436,7 +436,7 @@ Risk Assessment Form
 											<div id="editor1_error">
 											</div>
 										</div>
-										<span><i style="font-size:18px;color:#FBC02D" class="fa fa-info-circle" onclick="informationdetail('Sasaran Organisasi')"></i></span>
+										<span><i style="font-size:18px;color:#FBC02D" class="fa fa-info-circle" onclick="informationdetail('Risk Event')"></i></span>
 									</div>	
 									
 									<div class="form-group">
@@ -444,7 +444,7 @@ Risk Assessment Form
 										<div class="col-md-6">
 											<textarea class="form-control input-circle wysihtml5" rows="6" name="PENYEBAB"><?php echo !empty($PENYEBAB) ? $PENYEBAB : ''; ?></textarea>
 										</div>
-										<span><i style="font-size:18px;color:#FBC02D" class="fa fa-info-circle" onclick="informationdetail('Sasaran Organisasi')"></i></span>
+										<span><i style="font-size:18px;color:#FBC02D" class="fa fa-info-circle" onclick="informationdetail('Penyebab')"></i></span>
 									</div>
 
 									<div class="form-group">
@@ -452,7 +452,7 @@ Risk Assessment Form
 										<div class="col-md-6">
 											<textarea class="form-control input-circle wysihtml5" rows="6" name="DAMPAK"><?php echo !empty($DAMPAK) ? $DAMPAK : ''; ?></textarea>
 										</div>
-										<span><i style="font-size:18px;color:#FBC02D" class="fa fa-info-circle" onclick="informationdetail('Sasaran Organisasi')"></i></span>
+										<span><i style="font-size:18px;color:#FBC02D" class="fa fa-info-circle"  onclick="informationdetail('Dampak')"></i></span>
 									</div>
 
 									<div class="form-group">
@@ -914,11 +914,33 @@ Risk Assessment Form
 	</div>
 </div>
 <script>
+var dataTooltips;
+$.ajax({
+		url: "<?php echo site_url('risk/risk_identification/GetTooltipsData');?>",
+        type : "POST",
+        dataType : "json",        
+        success : function(data) {
+			dataTooltips=data;
+        },
+        error : function(data) {
+			console.log(data);
+            // do something
+        }
+	});
+
+
 function informationdetail(title){
 
-	$('#lbltitleinfrm').text(title)
+	for (i = 0; i < dataTooltips.length; ++i) {
+	            	var res = dataTooltips[i];
+					//alert(res.label_name);
+					if (res.label_name == title){
+						$('#lbltitleinfrm').text(res.name);
+					}
+	}
 	$('#work-informasi-modal').modal('show');
-		
+	
+	
 }
 
 </script>

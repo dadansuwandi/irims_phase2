@@ -520,5 +520,10 @@
             }
         }
        
+
+        public function GetTooltipsData(){
+            $query = $this->db->select('name,label_name')->from('risk_information_tooltips')->order_by('name')->get()->result();
+            echo json_encode($query);
+        }
     }
 ?>
