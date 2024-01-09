@@ -1724,7 +1724,7 @@ $(document).ready(function () {
 	var data_marker = JSON.parse('<?php echo json_encode($map_risiko)?>');
 	var osmUrl 		= ' http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 	osmTiles 		= new L.TileLayer(osmUrl, {maxZoom: 18}),
-	map 			= new L.Map('risk-maps', {layers: [osmTiles], center: new L.LatLng(-1.616836,113.867503), zoom: 5 });
+	//map 			= new L.Map('risk-maps', {layers: [osmTiles], center: new L.LatLng(-1.616836,113.867503), zoom: 5 });
 
 	for (var i=0; i<=data_marker.length-1; i++) {
     	plotMarker(data_marker[i]);
