@@ -283,4 +283,53 @@ class User_model extends MY_Model
 			return FALSE;
 		
 	}
+	function getSideBar(){
+		
+	 
+		$query = $this->db->select('id,label,style as icon,url')->from('acl_menus')->where('parent is null')->get()->result();
+	 
+	 
+	 //die($query);
+	 $menus = array();
+	 foreach($query as $row){
+		//echo $row->id; 
+		 $menus[$row->label] = 
+		 array('id' =>$row->id,'icon' => $row->icon, 'label' => $row->label,
+			   'sub_nav' =>  $this->getNavbar($row->id)	
+		
+	);
+	//$i++;
+
+	}
+	 return $menus;
+		
+	}
+
+	function getNavbar($parent){
+		
+	 
+	$query = $this->db->select('id,label ,style as icon,url')->from('acl_menus')->where('  parent ='.$parent )->get()->result();
+	 
+	 //die($query);
+	 $nav_bar = array();
+	 foreach($query as $row){
+		 $nav_bar[$row->url] = array( 'icon' => $row->icon, 'label' => $row->label
+	);
+	}
+	 return $nav_bar;
+		
+	}
+
+
+	function getidByUrl($url){
+		
+		 $this->db->select('parent');
+		 $this->db->from('acl_menus');
+		 $this->db->where('url',$url);
+		 $this->db->limit(1);
+
+		 return $this->db->get()->row()->parent;
+
+			
+		}
 }
