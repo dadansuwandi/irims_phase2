@@ -5,6 +5,7 @@ class Role_model extends MY_Model
 	protected $table_name = 'acl_roles';
 	protected $role_parents_table = 'acl_role_parents';
 	protected $rules_table = 'acl_rules';
+	protected $table_name_map = 'ac_user_role_maping';
 	
 	function get_list()
 	{
@@ -165,6 +166,12 @@ class Role_model extends MY_Model
 		$this->db->delete($this->rules_table, array('role_id' => $role_id));
 		$this->db->delete($this->role_parents_table, array('role_id' => $role_id));
 		$this->db->delete($this->table_name, array('id' => $role_id));
+	}
+
+	function deleteMap($role_id)
+	{
+		
+		$this->db->delete($this->table_name_map, array('id' => $role_id));
 	}
 }
 
