@@ -360,7 +360,7 @@ Risk Monitoring Map
 		<div class="portlet box blue">
 			<div class="portlet-title">
 				<div class="caption">
-					<i class="fa fa-table"></i>Risk List
+					<i class="fa fa-table"></i>Risk List 123
 				</div>
 				<!-- <div class="tools">
 					<a href="javascript:;" class="collapse">
@@ -719,5 +719,12 @@ Risk Monitoring Map
 
     });
 	// End Export To PDF
+	
+	
+    var table = $('.table').DataTable({
+		
+      
+    });
+		
 </script>
 <!-- END JAVASCRIPTS -->

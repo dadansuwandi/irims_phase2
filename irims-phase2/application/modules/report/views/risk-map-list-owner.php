@@ -303,7 +303,7 @@ Risk Monitoring Map
 				<button type="submit" class="btn blue"><i class="fa fa-check"></i> Filter</button>
 				<a href="<?php echo site_url('report/risk_map/owner'); ?>" class="btn default">Reset</a>
 				<!-- <a href="<?php //echo site_url('report/risk_map/owner_pdf?tahun='.$_POST['tahun']); ?>" class="btn red">Export to PDF<i class="fa fa-file-pdf-o"></i></a>  -->
-				<button type="button" class="btn red" id="pdfDownloader">Export to PDF<i class="fa fa-file-pdf-o"></i></button>
+				<!-- <button type="button" class="btn red" id="pdfDownloader">Export to PDF<i class="fa fa-file-pdf-o"></i></button> -->
 			</div>
 		</form>
 		<!-- END FORM-->

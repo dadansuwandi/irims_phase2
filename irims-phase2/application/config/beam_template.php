@@ -123,6 +123,8 @@ $config['beam_template']['css_global'] = array(
 	'plugins/bootstrap-colorpicker/css/colorpicker',
 	'plugins/bootstrap-daterangepicker/daterangepicker-bs3',
 	'plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min',
+	
+
 	/* END PAGE LEVEL PLUGIN STYLES */
 	/* BEGIN THEME STYLES */
 	'css/components-md',
@@ -175,6 +177,12 @@ $config['beam_template']['js_global'] = array(
 	'plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min',
 	'plugins/auto-numeric/autoNumeric.min',
 	'plugins/rupiah-format/rupiah',
+	'plugins/datatables/plugins/bootstrap/jquery.dataTables.min',
+	'plugins/datatables/plugins/bootstrap/dataTables.buttons.min',
+	'plugins/datatables/plugins/bootstrap/jszip.min',
+	'plugins/datatables/plugins/bootstrap/pdfmake.min',
+	'plugins/datatables/plugins/bootstrap/vfs_fonts',
+	'plugins/datatables/plugins/bootstrap/buttons.html5.min',
 	/* END PAGE LEVEL PLUGINS*/
 	/* BEGIN PAGE LEVEL SCRIPTS */
 	'scripts/metronic',

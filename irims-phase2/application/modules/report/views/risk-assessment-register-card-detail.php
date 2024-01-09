@@ -21,7 +21,7 @@ Risk Register Card Detail
 <!-- END PAGE HEADER-->
 <div class="row margin-bottom-20">
 	<div class="form-actions">
-		<a href="<?php echo site_url('report/risk_assessment_report/register_card_detail_pdf?tahun='.$_GET['tahun'].'&risk_item_id='.$_GET['risk_item_id'].'&risk_id='.$_GET['risk_id'].'&risk_no='.$_GET['risk_no'].'&risk_level='.$_GET['risk_level']); ?>" class="btn red">Export to PDF<i class="fa fa-file-pdf-o"></i></a>
+		<!-- <a href="<?php echo site_url('report/risk_assessment_report/register_card_detail_pdf?tahun='.$_GET['tahun'].'&risk_item_id='.$_GET['risk_item_id'].'&risk_id='.$_GET['risk_id'].'&risk_no='.$_GET['risk_no'].'&risk_level='.$_GET['risk_level']); ?>" class="btn red">Export to PDF<i class="fa fa-file-pdf-o"></i></a> -->
 	</div> 
 </div>
 <div class="portlet box red">

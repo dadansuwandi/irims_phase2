@@ -758,5 +758,9 @@ Risk Identification Map
 
     });
 	// End Export To PDF
+	var table = $('.table').DataTable({
+		
+      
+    });
 </script>
 <!-- END JAVASCRIPTS -->

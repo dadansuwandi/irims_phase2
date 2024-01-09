@@ -99,7 +99,7 @@ Risk Progress
 			<div class="form-actions">
 				<button type="submit" class="btn blue"><i class="fa fa-check"></i> Filter</button>
 				<a href="<?php echo site_url('report/risk_assessment_report/index'); ?>" class="btn default">Reset</a> 
-				<a href="<?php echo site_url('report/risk_assessment_report/index_pdf?tahun='.$_POST['tahun'].'&status='.$_POST['status'].'&risk_category_id='.$_POST['risk_category_id'].'&unit_id='.$_POST['unit_id']); ?>" class="btn red">Export to PDF<i class="fa fa-file-pdf-o"></i></a>
+				<!-- <a href="<?php echo site_url('report/risk_assessment_report/index_pdf?tahun='.$_POST['tahun'].'&status='.$_POST['status'].'&risk_category_id='.$_POST['risk_category_id'].'&unit_id='.$_POST['unit_id']); ?>" class="btn red">Export to PDF<i class="fa fa-file-pdf-o"></i></a> -->
 			</div>
 		</form>
 		<!-- END FORM-->
@@ -116,7 +116,7 @@ Risk Progress
 	</div>
 	<div class="portlet-body">
 		<div class="overFlowTable">
-			<table class="table table-striped table-bordered table-hover">
+			<table class="table table-striped table-bordered table-hover" >
 				<thead>
 					<tr>
 						<th class="hidden-xs" rowspan="2">NO</th>
@@ -139,6 +139,7 @@ Risk Progress
 						<th class="hidden-xs" rowspan="2">PIC (KANTOR PUSAT)</th>
 						<th class="hidden-xs" rowspan="2">KATEGORI RISK</th>
 						<th class="hidden-xs" rowspan="2">KATEGORI</th>
+						
 					</tr>
 
 					<tr>
@@ -305,13 +306,9 @@ Risk Progress
 							}
 						?>
 					<?php endforeach; ?>
-						<tr>
-							<td colspan="21" align="center"><b>JUMLAH</b></td>
-							<td><b><?php echo $teridentifikasi?></b></td>
-							<td><b><?php echo $termitigasi?></b></td>
-							<td colspan="3">&nbsp;</td>
-						</tr>
-				</tbody>
+					
+						
+					</tbody>
 			</table>
 
 			<table style="width:400px !important" class="table table-striped table-bordered table-hover">
@@ -395,3 +392,79 @@ Risk Progress
 		overflow: auto; 
 	}
 </style>
+
+
+
+<script type="text/javascript" charset="utf-8">
+	
+		$('.table  thead tr')
+        .addClass('filters')
+        //.appendTo('#example thead');
+ 
+    var table = $('.table ').DataTable({
+		
+        orderCellsTop: true,
+		dom: 'Bfrtip',
+		
+        buttons: [
+            {
+                extend:    'excelHtml5',
+                text:      '<i class="fa fa-file-excel-o" style=color:green></i>',
+                titleAttr: 'Excel'
+            },           
+            {
+                extend:    'pdfHtml5',
+                text:      '<i class="fa fa-file-pdf-o" style=color:red></i>',
+                titleAttr: 'PDF'
+            }
+        ],
+        initComplete: function () {
+            var api = this.api();
+            // For each column
+            api
+                .columns()
+                .eq(0)
+                .each(function (colIdx) {
+                    // Set the header cell to contain the input element
+                    var cell = $('.filters th').eq(
+                        $(api.column(colIdx).header()).index()
+                    );
+                    var title = $(cell).text();
+                    $(cell).html('<input type="text" placeholder="' + title + '" />');
+ 
+                    // On every keypress in this input
+                    $(
+                        'input',
+                        $('.filters th').eq($(api.column(colIdx).header()).index())
+                    )
+                        .off('keyup change')
+                        .on('change', function (e) {
+                            // Get the search value
+                            $(this).attr('title', $(this).val());
+                            var regexr = '({search})'; //$(this).parents('th').find('select').val();
+ 
+                            var cursorPosition = this.selectionStart;
+                            // Search the column for that value
+                            api
+                                .column(colIdx)
+                                .search(
+                                    this.value != ''
+                                        ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                        : '',
+                                    this.value != '',
+                                    this.value == ''
+                                )
+                                .draw();
+                        })
+                        .on('keyup', function (e) {
+                            e.stopPropagation();
+ 
+                            $(this).trigger('change');
+                            $(this)
+                                .focus()[0]
+                                .setSelectionRange(cursorPosition, cursorPosition);
+                        });
+                });
+        },
+    });
+		</script>

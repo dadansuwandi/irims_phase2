@@ -85,7 +85,7 @@ Risk Progress
 			<div class="form-actions">
 				<button type="submit" class="btn blue"><i class="fa fa-check"></i> Filter</button>
 				<a href="<?php echo site_url('report/risk_assessment_report/owner'); ?>" class="btn default">Reset</a>
-				<a href="<?php echo site_url('report/risk_assessment_report/owner_pdf?tahun='.$_POST['tahun'].'&status='.$_POST['status'].'&risk_category_id='.$_POST['risk_category_id']); ?>" class="btn red">Export to PDF<i class="fa fa-file-pdf-o"></i></a> 
+				<!-- <a href="<?php echo site_url('report/risk_assessment_report/owner_pdf?tahun='.$_POST['tahun'].'&status='.$_POST['status'].'&risk_category_id='.$_POST['risk_category_id']); ?>" class="btn red">Export to PDF<i class="fa fa-file-pdf-o"></i></a>  -->
 			</div>
 		</form>
 		<!-- END FORM-->
@@ -380,3 +380,77 @@ Risk Progress
 		overflow: auto; 
 	}
 </style>
+
+<script type="text/javascript" charset="utf-8">
+	
+		//$('.table thead tr')
+        //.addClass('filters')
+        //.appendTo('#example thead');
+ 
+    var table = $('.table').DataTable({
+		
+        orderCellsTop: true,
+		dom: 'Bfrtip',
+		
+		buttons: [
+            {
+                extend:    'excelHtml5',
+                text:      '<i class="fa fa-file-excel-o" style=color:green></i>',
+                titleAttr: 'Excel'
+            },           
+            {
+                extend:    'pdfHtml5',
+                text:      '<i class="fa fa-file-pdf-o" style=color:red></i>',
+                titleAttr: 'PDF'
+            }
+        ],
+        initComplete: function () {
+            var api = this.api();
+            // For each column
+            api
+                .columns()
+                .eq(0)
+                .each(function (colIdx) {
+                    // Set the header cell to contain the input element
+                    var cell = $('.filters th').eq(
+                        $(api.column(colIdx).header()).index()
+                    );
+                    var title = $(cell).text();
+                    $(cell).html('<input type="text" placeholder="' + title + '" />');
+ 
+                    // On every keypress in this input
+                    $(
+                        'input',
+                        $('.filters th').eq($(api.column(colIdx).header()).index())
+                    )
+                        .off('keyup change')
+                        .on('change', function (e) {
+                            // Get the search value
+                            $(this).attr('title', $(this).val());
+                            var regexr = '({search})'; //$(this).parents('th').find('select').val();
+ 
+                            var cursorPosition = this.selectionStart;
+                            // Search the column for that value
+                            api
+                                .column(colIdx)
+                                .search(
+                                    this.value != ''
+                                        ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                        : '',
+                                    this.value != '',
+                                    this.value == ''
+                                )
+                                .draw();
+                        })
+                        .on('keyup', function (e) {
+                            e.stopPropagation();
+ 
+                            $(this).trigger('change');
+                            $(this)
+                                .focus()[0]
+                                .setSelectionRange(cursorPosition, cursorPosition);
+                        });
+                });
+        },
+    });
+		</script>

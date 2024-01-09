@@ -97,7 +97,7 @@ Risk Progress
 <div class="portlet box red">
 	<div class="portlet-title">
 		<div class="caption">
-			<i class="fa fa-list"></i>Risk Assessment
+			<i class="fa fa-list"></i>Risk Assessment head
 		</div>
 	</div>
 	<div class="portlet-body">
@@ -382,3 +382,13 @@ Risk Progress
 		overflow: auto; 
 	}
 </style>
+
+
+
+<script type="text/javascript" charset="utf-8">
+ 
+    $('.table').DataTable({
+		
+
+    });
+		</script>
