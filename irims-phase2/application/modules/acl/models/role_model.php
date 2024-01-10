@@ -6,6 +6,7 @@ class Role_model extends MY_Model
 	protected $role_parents_table = 'acl_role_parents';
 	protected $rules_table = 'acl_rules';
 	protected $table_name_map = 'ac_user_role_maping';
+	protected $table_assigment = 'mst_role_assigment';
 	
 	function get_list()
 	{
@@ -173,6 +174,12 @@ class Role_model extends MY_Model
 		
 		$this->db->delete($this->table_name_map, array('id' => $role_id));
 	}
+	function deleteroleassigment($role_id)
+	{
+		
+		$this->db->delete($this->table_assigment, array('roleAssigmentId' => $role_id));
+	}
+	
 }
 
 /* End of file role_model.php */
