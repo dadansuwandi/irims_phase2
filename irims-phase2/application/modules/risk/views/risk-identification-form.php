@@ -332,6 +332,7 @@ Risk Assessment Form
 								</div>
 
 								<input type="hidden" class="form-control" name="RISK_IDENTIFICATION_ID" id="risk_identification_id" value="<?php echo !empty($RISK_IDENTIFICATION_ID) ? $RISK_IDENTIFICATION_ID : ''; ?>"/>
+								<input type="hidden" class="form-control"  id="index" value="<?php echo !empty($index) ? $index : ''; ?>"/>
 
 								<div class="tab-pane active" id="tab1">
 									<div class="form-group">
@@ -935,7 +936,9 @@ function informationdetail(title){
 	            	var res = dataTooltips[i];
 					//alert(res.label_name);
 					if (res.label_name == title){
-						$('#lbltitleinfrm').text(res.name);
+						
+						$('#lbltitleinfrm').text(title);
+						$('#lbldetail').text(res.name);
 					}
 	}
 	$('#work-informasi-modal').modal('show');
@@ -952,7 +955,8 @@ function informationdetail(title){
 				<h3><b><lable id="lbltitleinfrm"></lable></b></h3>
 			</div>
 			<div class="modal-body">
-				detail informasi
+			<lable id="lbldetail"></lable>
+				
 			</div>
 		</div>
 	</div>
@@ -1018,7 +1022,32 @@ function informationdetail(title){
 	                errorElement: 'span', //default input error message container
 	                errorClass: 'help-block help-block-error', // default input error message class
 	                focusInvalid: false, // do not focus the last invalid input
+					ignore: ":hidden:not(textarea)",
 	                rules: {
+						OBJECTIVE: {
+	                        required: true
+	                    },
+						KPI: {
+	                        required: true
+	                    },
+						WORK_PROGRAM: {
+	                        required: true
+	                    },
+						ACTIVITY: {
+	                        required: true
+	                    },
+						SCOPE: {
+	                        required: true
+	                    },
+						CRITERIA: {
+	                        required: true
+	                    },
+						EXTERNAL_CONTEXT: {
+	                        required: true
+	                    },
+						INTERNAL_CONTEXT: {
+	                        required: true
+	                    },
 	                    HAZARD: {
 	                        required: true
 	                    },
@@ -1144,9 +1173,9 @@ function informationdetail(title){
 	                //Metronic.scrollTo($('.page-title'));
 	            }
 
-	            var ajaxPostData = function(form, redirect){
+	            var ajaxPostData = function(form, redirect,index){
 	            	$.blockUI();
-
+					
 	                $.ajax({
 	                    url: form.attr("action"),
 	                    type: "post",
@@ -1190,12 +1219,41 @@ function informationdetail(title){
 	                onNext: function (tab, navigation, index) {
 	                    success.hide();
 	                    error.hide();
+						if (index == 1){
+							$('#tab2 .wysihtml5').each(function() {
+        						$(this).rules('remove');
+    						});
+							$('#tab3 .wysihtml5').each(function() {
+        						$(this).rules('remove');
+    						});
+						}
+						
+						if (index == 2){
+							$('#tab2 .wysihtml5').each(function() {
+        						$(this).rules('add', {
+            					required: true,
+        						});
+    						});
+
+							$('#tab3 .wysihtml5').each(function() {
+        						$(this).rules('remove');
+    						});
+						}
+						if (index == 3){
+							$('#tab3 .wysihtml5').each(function() {
+        						$(this).rules('add', {
+            					required: true,
+        						});
+    						});
+
+							
+						}
 
 	                    if (form.valid() == false) {
 	                        return false;
 	                    }
 
-	                    ajaxPostData(form, false);
+	                    ajaxPostData(form, false,index);
 	                    handleTitle(tab, navigation, index);
 	                },
 	                onPrevious: function (tab, navigation, index) {
@@ -1216,7 +1274,7 @@ function informationdetail(title){
 
 	            $('#form_wizard_1').find('.button-previous').hide();
 	            $('#form_wizard_1 .button-submit').click(function () {
-	                ajaxPostData(form, true);
+	                ajaxPostData(form, true,index);
 	            }).hide();
 
 	            //apply validation on select2 dropdown value change, this only needed for chosen dropdown integration.
