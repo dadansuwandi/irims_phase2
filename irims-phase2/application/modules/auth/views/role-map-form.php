@@ -80,6 +80,26 @@ Role Maping <small><?php echo $this->config->item('page_title'); ?></small>
 					<div class="portlet-body form">
 				<?php echo messages(); ?>
 				<!-- BEGIN FORM-->
+				<div class="form-group">
+							<label class="col-md-2 control-label">Is LDAP</label>
+							<div class="col-md-10">
+								<div class="radio-list">
+									<label class="radio-inline">
+									<input type="radio" name="ldap" id="ldapNo" value="0" checked> No </label>
+
+									<label class="radio-inline">
+									<input type="radio" name="ldap" id="ldapYes" value="1"> Yes </label>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="control-label col-md-2">Search By NIP/Name/Position </label>
+							<div class="col-md-10">
+								<input type="text" name="search" id="search" class="form-control"/>
+							</div>
+						</div>
+
 				<form id="form_sample_3" class="form-horizontal" method="post" enctype="multipart/form-data">
 					<div class="form-body">
 						<!-- <h3 class="form-section">Advance validation. <small>Custom radio buttons, checkboxes and Select2 dropdowns</small></h3> -->
@@ -225,4 +245,216 @@ Role Maping <small><?php echo $this->config->item('page_title'); ?></small>
 	});
 
 	$(".date-picker").datepicker({format: 'yyyy-mm-dd'});
+	$('#search').prop('readonly', true);
+	$('#ldapYes').on('click', function(e) {
+			if ($('#ldapYes').is(':checked')) { 
+				$('#search').prop('readonly', false);
+				$('#txtUserName').prop('readonly', true);
+				
+			} 
+		});
+
+		$('#ldapNo').on('click', function(e) {
+			if ($('#ldapNo').is(':checked')) { 
+				$('#txtUserName').prop('readonly', true);
+				$('#search').prop('readonly', true);
+				
+			} 
+		});
+	// Initialize 
+	var base_url = '<?php echo base_url() ?>';
+		var API_HOST_DEV_AP2 = '<?php echo getenv('API_HOST_DEV_AP2');?>'
+		var API_HOST_USER_AP2 = '<?php echo getenv('API_HOST_USER_AP2');?>'
+		var API_HOST_PASS_AP2 = '<?php echo getenv('API_HOST_PASS_AP2');?>'
+		var urlUser = '<?php echo '/mobile/employee/getEmployeeDataSidoelbyfilter';?>'
+		//var urlPhoto = '<?php echo '/mobile/Photo/index/';?>'
+	$("#search").autocomplete({
+        	source: function( request, response ) {
+				if (request.term != "") {
+					// Fetch data
+					$.ajax({
+						url: API_HOST_DEV_AP2 + urlUser,
+						type: 'post',
+						dataType: "json",
+						data: {
+							username: API_HOST_USER_AP2,
+							password: API_HOST_PASS_AP2,
+							params: request.term, // by Nip/PeopleName/PeoplePosition
+							submit: 1
+						},
+						async: true,
+						success: function( data ) {
+							if (data != "") {
+								//response( data );
+								var resp = $.map(data,function(obj){
+									var name = obj.PeopleName;
+									$('#txtUserName').val(obj.PeopleUsername);
+									$('#risk_id').val(obj.RoleId);
+
+									console.log(obj);
+									// for (var key in obj) {
+									// if (obj.hasOwnProperty(key)) {
+									// 	alert(key + "/" + obj[key]);
+									// 	//PeopleUsername
+									// 	//Nip
+									// 	//PeoplePosition
+									// 	//RoleId
+									// 	//RoleDesc
+									// 	//BranchIataCode
+									// 	//BranchName
+
+									// 	}
+									// }
+									//alert(name);
+                                    // return {
+                                    //     label: name,
+                                    //     value: name,
+                                    //     data: obj
+                                    // }
+								}); 
+								response(resp);
+								console.log("Connection LDAP is Ok.");
+							}
+						},
+						error: function (jqXHR, exception) {
+							var error_msg = '';
+							if (jqXHR.status === 0) {
+								error_msg = 'Not connect.\n Verify Network.';
+							} else if (jqXHR.status == 404) {
+								// 404 page error
+								error_msg = 'Requested page not found. [404]';
+							} else if (jqXHR.status == 500) {
+								// 500 Internal Server error
+								error_msg = 'Internal Server Error [500].';
+							} else if (exception === 'parsererror') {
+								// Requested JSON parse
+								error_msg = 'Requested JSON parse failed.';
+							} else if (exception === 'timeout') {
+								// Time out error
+								error_msg = 'Time out error.';
+							} else if (exception === 'abort') {
+								// request aborte
+								error_msg = 'Ajax request aborted.';
+							} else {
+								error_msg = 'Uncaught Error.\n' + jqXHR.responseText;
+							}
+							// error alert message
+							alert('error :: ' + error_msg);
+						}
+					});
+				}
+        	},
+        	// select: function (event, ui) {
+			// 	// Call removeCookie function with name of Cookie that you want to remove
+			// 	removeCookie('nip');
+          		
+			// 	// Set selection
+			// 	var data = ui.item.data;
+          	// 	$('#first_name').val(data.PeopleName);
+          	// 	$('#username').val(data.PeopleUsername);
+			// 	$('#email').val(data.PeopleUsername + '<?php echo getenv('HOST_DOMAIN_AP2');?>');
+				
+			// 	// To create cookie, call setCookie with three params: name of cookie, value of cookie, expired time (days)
+			// 	setCookie('nip', data.Nip, 0);
+			// 	var nip = data.Nip;
+			// 	var desc = data.PeopleName;
+			// 	var saveCookieName = $.ajax({
+			// 		url: 'save_cookie_temp',
+			// 		type: "post",
+			// 		data: { name: nip, description: desc },
+			// 		success: function (data) {
+			// 			var dataParsed = JSON.parse(data);
+			// 			//console.log(dataParsed);
+			// 		},
+			// 		error: function (jqXHR, exception) {
+			// 			var error_msg = '';
+			// 			if (jqXHR.status === 0) {
+			// 				error_msg = 'Not connect.\n Verify Network.';
+			// 			} else if (jqXHR.status == 404) {
+			// 				// 404 page error
+			// 				error_msg = 'Requested page not found. [404]';
+			// 			} else if (jqXHR.status == 500) {
+			// 				// 500 Internal Server error
+			// 				error_msg = 'Internal Server Error [500].';
+			// 			} else if (exception === 'parsererror') {
+			// 				// Requested JSON parse
+			// 				error_msg = 'Requested JSON parse failed.';
+			// 			} else if (exception === 'timeout') {
+			// 				// Time out error
+			// 				error_msg = 'Time out error.';
+			// 			} else if (exception === 'abort') {
+			// 				// request aborte
+			// 				error_msg = 'Ajax request aborted.';
+			// 			} else {
+			// 				error_msg = 'Uncaught Error.\n' + jqXHR.responseText;
+			// 			}
+			// 			// error alert message
+			// 			alert('error :: ' + error_msg);
+			// 		}
+			// 	});
+
+			// 	// var img = $("#previewimgprofile").attr('src', API_HOST_DEV_AP2 + urlPhoto + data.Nip)
+			// 	// .on('load', function() {
+			// 	// 	if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
+			// 	// 		alert('broken image!');
+			// 	// 	} else {
+			// 	// 		if (saveCookieName.status == 200) {
+			// 	// 			<?php
+			// 	// 				// $nipData = $this->curl->simple_get(base_url() .'my_api/get_cookie_name');
+			// 	// 				// $getNip = json_decode($nipData, TRUE);
+			// 	// 				// $getNip['nip'];
+			// 	// 			?>	
+
+			// 	// 			// Remote image URL
+			// 	// 			<?php 
+			// 	// 				/* $url = getenv('API_HOST_DEV_AP2').'/mobile/Photo/index/'.$getNip['nip'];
+			// 	// 				// Image path
+			// 	// 				$imgDownload = 'uploads/user/' . date('Ymd') . '-ldap-'.$getNip['nip'].'.jpg';
+			// 	// 				// Save image
+			// 	// 				$ch = curl_init($url);
+			// 	// 				$fp = fopen($imgDownload, 'wb');
+			// 	// 				curl_setopt($ch, CURLOPT_FILE, $fp);
+			// 	// 				curl_setopt($ch, CURLOPT_HEADER, 0);
+			// 	// 				curl_exec($ch);
+			// 	// 				curl_close($ch);
+			// 	// 				fclose($fp); */
+			// 	// 			?>
+			// 	// 		}
+			// 	// 	}
+			// 	// });
+				
+			// 	// //clear a file input with jQuery 
+			// 	// $("#userfile").val("");
+			// 	// $("#userfile").remove();
+			// 	// // redeclare file input
+			// 	// var base_url = '<?php echo base_url();?>'
+			// 	// var imgDownload = '<?php echo 'uploads/user/' . date('Ymd') . '-ldap-';?>' + nip + '<?php echo '.jpg';?>';
+			// 	// var urlImage = base_url + imgDownload;
+			// 	// var input =  $('<input>').attr({
+			// 	// 	type: 'hidden',
+			// 	// 	value: '',
+			// 	// 	id: 'photo',
+			// 	// 	name: 'photo',
+			// 	// });
+			// 	// $('#photo-temp').append(input);
+			// 	// //insert to value input file
+			// 	// var filename = urlImage.substring(urlImage.lastIndexOf('/')+1);
+			// 	// $('#photo').val(filename);
+			// 	// console.log(filename);
+
+			// 	// // Call removeCookie function with name of Cookie that you want to remove
+			// 	// removeCookie('nip');
+
+			// 	// // clear search input after selection
+			// 	// $("#search").load(location.href + " #search");
+			// 	// $('#search').val('').trigger('change');
+				
+          	// 	return false;
+        	// },
+			minLength: 1,
+			autoFocus: true,
+			classes: {
+				"ui-autocomplete": "highlight"
+			}
+      	});
 	</script>
