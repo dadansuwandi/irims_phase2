@@ -56,7 +56,8 @@
         }
 
         function add() {
-            $this->_updatedata();
+            //die('ss');
+           $this->_updatedata();
         }
 
         function _updatedata($id = 0) {
@@ -79,6 +80,7 @@
             $this->data['RISK_PIC_P']       = $this->risk_pic_model->drop_options();
 
             //$this->data['OBJECTIVE']        = $this->risk_pic_model->get_by_id($this->session->userdata('pic_id'))->objective;
+            $this->data['PIC_UNIT_KERJA_ID']      = $this->session->userdata('pic_id');
             $this->data['USER_PIC_ID']      = $this->session->userdata('pic_id');
 
             if ($id <= 0) { //This data is just information
@@ -88,6 +90,7 @@
             }
 
             $this->data['KPI_DATA']              = $this->risk_kpi_model->drop_options_2();
+           
             //$this->data['WORK_PROGRAM']          = $this->risk_pic_model->get_by_id($this->session->userdata('pic_id'))->work_program;
 
             $this->data['SCOPE']                = $this->risk_pic_model->get_by_id($this->session->userdata('pic_id'))->objective;
@@ -188,7 +191,9 @@
         }
 
         function saveWizard() {
-            $result = false;
+           
+           $result = false;
+            die($_POST['index']);
 
             if(isset($_POST)){
                 $dataPostIdentification['USER_PIC_ID']                       = $this->session->userdata('pic_id');
@@ -524,6 +529,200 @@
         public function GetTooltipsData(){
             $query = $this->db->select('name,label_name')->from('risk_information_tooltips')->order_by('name')->get()->result();
             echo json_encode($query);
+        }
+
+         function SaveData(){
+ 
+         
+            $result = false;
+       
+           if(isset($_POST)){
+           
+ //save to worksheet
+                $data['RiskCode'] = $this->risk_identification_model->create_code();
+                $data['UnitKerjaCode'] =$_POST['USER_LAST_NAME'];
+                $data['PeriodeDate']   =  date('Y-m-d H:i:s');
+                $data['sequence']      = $this->risk_identification_model->getsequnce();
+                $data['CreatedBy']     = $this->session->userdata('auth_user');
+                $data['CreatedDate']     =  date('Y-m-d H:i:s');
+
+                $this->db->insert('tr_worksheet_header',$data);
+                $WorksheetID = $this->db->insert_id();
+
+               $dataPostIdentification['WorksheetID']                       = $WorksheetID;
+               $dataPostIdentification['SasaranOrganisasi']                 = $_POST['OBJECTIVE'];   
+               $dataPostIdentification['KPI']                               = $_POST['KPI'];
+               $dataPostIdentification['ProgramKerja']                      = $_POST['WORK_PROGRAM'];
+               $dataPostIdentification['Aktivitas']                         = $_POST['ACTIVITY'];
+               $dataPostIdentification['Lingkup']                           = $_POST['SCOPE'];
+               $dataPostIdentification['Kriteria']                          = $_POST['CRITERIA'];
+               $dataPostIdentification['KonteksEksternal']                  = $_POST['EXTERNAL_CONTEXT'];
+               $dataPostIdentification['KonteksInternal']                   = $_POST['INTERNAL_CONTEXT'];
+               $dataPostIdentification['CreatedBy']                         =  $this->session->userdata('auth_user');
+               
+            
+               if(isset($_POST['RISK_IDENTIFICATION_ID']) && $_POST['RISK_IDENTIFICATION_ID']!=""){
+                   $idSave = $this->risk_identification_model->update($_POST['RISK_IDENTIFICATION_ID'], $dataPostIdentification);
+
+                   if($idSave > 0){
+                       $result = $idSave;
+                   }
+               }else{
+                
+                   
+                    //save
+                    $this->db->insert('tr_frr01',$dataPostIdentification);
+                     $idSave = $this->db->insert_id();
+                     if($idSave > 0){
+                        $result = $idSave;
+
+                        /*crete insert log */
+                        $logData['risk_identification_id']  = $idSave;
+                        $logData['created_date']            = date("Y-m-d H:i:s");
+                        $logData['user_id']                 = $this->session->userdata('auth_user');
+                        $logData['keterangan']              = "Membuat kertas kerja baru";
+                        $this->log_model->insert($logData);
+                    }
+                   
+                  
+               }
+            
+            if($result){
+              
+                echo json_encode(array('status'=>'success', 'RISK_IDENTIFICATION_ID'=>$result));
+            }else{
+                echo json_encode(array('status'=>'failed'));
+            }
+
+              
+          }
+
+          
+        }
+
+        function SaveData2(){
+ 
+          
+
+            $result = false;
+       
+           if(isset($_POST)){
+			
+               $dataPostIdentification['frr01ID']                       =$_POST['RISK_IDENTIFICATION_ID'];
+               $dataPostIdentification['RiskRegisterID']                = $_POST['RISK_ITEM_ID'];   
+               $dataPostIdentification['JenisResikoID']                 = 0;
+               $dataPostIdentification['KlasifikasiRiskID']             =0;
+                $dataPostIdentification['RiskEvent']                     = $_POST['HAZARD'];
+                $dataPostIdentification['Penyebab']                      = $_POST['PENYEBAB'];
+                $dataPostIdentification['Dampak']                        = $_POST['DAMPAK'];
+                $dataPostIdentification['InherentRiskK']                 = $_POST['INHERENT_RISK_K_ID'];
+                $dataPostIdentification['InherentRiskD']                 = $_POST['INHERENT_RISK_D_ID'];
+                $dataPostIdentification['PengendalianExistingControl']   = $_POST['PENGENDALIAN_YANG_TELAH_DILAKUKAN'];
+                $dataPostIdentification['NilaiEfektivitasExistingK']     = $_POST['EXCO_EFFECTIVENESS_VALUE_K_ID'];
+                $dataPostIdentification['NilaiEfektivitasExistingD']     = $_POST['EXCO_EFFECTIVENESS_VALUE_D_ID'];
+                $dataPostIdentification['CurrentRiskK']                  = $_POST['RESIDUAL_RISK_K_ID'];
+                $dataPostIdentification['CurrentRiskD']                  = $_POST['RESIDUAL_RISK_D_ID'];
+                $dataPostIdentification['PertimbanganID']                = 0;//$_POST['TREATMENT_DECISION_CATEGORY_ddl'];
+                $dataPostIdentification['CreatedBy']                         =  $this->session->userdata('auth_user');
+               
+            
+            //    if(isset($_POST['frr02ID']) && $_POST['frr02ID']!=""){
+            //     //    $idSave = $this->risk_identification_model->update($_POST['RISK_IDENTIFICATION_ID'], $dataPostIdentification);
+
+            //     //    if($idSave > 0){
+            //     //        $result = $idSave;
+            //     //    }
+            //    }else{
+                
+                    //$this->db->trans_start();
+                   $this->db->insert('tr_frr02',$dataPostIdentification);
+                    //$this->db->trans_complete();
+                    // $idSave = $this->db->insert_id();
+                    // echo json_encode($idSave);
+                    //  if($idSave > 0){
+                    //     $result = $idSave;
+
+                        /*crete insert log */
+                        // $logData['risk_identification_id']  = $idSave;
+                        // $logData['created_date']            = date("Y-m-d H:i:s");
+                        // $logData['user_id']                 = $this->session->userdata('auth_user');
+                        // $logData['keterangan']              = "Membuat kertas kerja baru";
+                        // $this->log_model->insert($logData);
+                  //  }
+                   
+                  
+              // }
+            // if($result){
+              
+            //     echo json_encode(array('status'=>'success', 'RISK_IDENTIFICATION_ID'=>$result));
+            // }else{
+            //     echo json_encode(array('status'=>'failed'));
+            // }
+
+              
+          }
+
+          
+        }
+        function SaveData3(){
+ 
+            
+            $biaya = preg_replace('/[Rp. ]/','',$_POST['MITIGATION_COSTS']);
+            echo json_encode($_POST['MULAI_WAKTU']);
+          
+            $result = false;
+       
+           if(isset($_POST)){
+           
+               $dataPostIdentification['frr02ID']                           =18;
+               $dataPostIdentification['RencanaPerlakuanRisikoTypeID']      = 0;//$_POST['RENCANA_PENGENDALIAN'];   
+               $dataPostIdentification['TargetResidualRiskK']                 = 0;//$_POST['TARGET_RESIDUAL_RISK_K_ID'];;
+               $dataPostIdentification['TargetResidualRiskD']               = $_POST['TARGET_RESIDUAL_RISK_D_ID'];
+               $dataPostIdentification['BiayaMitigasi']                     = number_format((float)$biaya, 2);
+               //preg_replace('/[Rp. ]/','',$_POST['MITIGATION_COSTS']);
+               
+               $dataPostIdentification['TargetStart']                      = date('Y-m-d',$_POST['MULAI_WAKTU']);
+                $dataPostIdentification['TargetEnd']                        =date('Y-m-d',$_POST['TARGET_WAKTU']);
+               // $dataPostIdentification['PicUnitKerjaID']                 = $_POST['PIC_UNIT_KERJA_ID'];
+               
+            
+            //    if(isset($_POST['frr02ID']) && $_POST['frr02ID']!=""){
+            //     //    $idSave = $this->risk_identification_model->update($_POST['RISK_IDENTIFICATION_ID'], $dataPostIdentification);
+
+            //     //    if($idSave > 0){
+            //     //        $result = $idSave;
+            //     //    }
+            //    }else{
+                
+                    //$this->db->trans_start();
+                   $this->db->insert('tr_frr03',$dataPostIdentification);
+                    //$this->db->trans_complete();
+                    // $idSave = $this->db->insert_id();
+                    // echo json_encode($idSave);
+                    //  if($idSave > 0){
+                    //     $result = $idSave;
+
+                        /*crete insert log */
+                        // $logData['risk_identification_id']  = $idSave;
+                        // $logData['created_date']            = date("Y-m-d H:i:s");
+                        // $logData['user_id']                 = $this->session->userdata('auth_user');
+                        // $logData['keterangan']              = "Membuat kertas kerja baru";
+                        // $this->log_model->insert($logData);
+                  //  }
+                   
+                  
+              // }
+            // if($result){
+              
+            //     echo json_encode(array('status'=>'success', 'RISK_IDENTIFICATION_ID'=>$result));
+            // }else{
+            //     echo json_encode(array('status'=>'failed'));
+            // }
+
+              
+          }
+
+          
         }
     }
 ?>

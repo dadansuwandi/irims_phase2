@@ -11,6 +11,7 @@
     	
     	private $ci;
     	protected $table                = 'tx_risk_identification';
+        //protected $tableRisk            = 'tr_frr01';
     	protected $status_dokumen_table = 'ms_status_dokumen';
     	protected $unit_table           = 'mst_units';
     	
@@ -148,6 +149,7 @@
                 return $result;
             }
     	}
+        
     	
     	function update($risk_identification_id, $data) {
             $data['UPDATED_BY']     = $this->session->userdata('auth_user');
@@ -360,6 +362,41 @@
             $data = $this->curl->simple_get(getenv('API_HOST_DEV_PMAO_AP2') . '/api/Rest/projectByBranch/admin.irims/'.$unitCode.'');
 								
 			return json_decode($data, TRUE);
+        }
+        function insertRist1($data) {
+           // return  ($data);
+    		// if (!isset($data['UNIT_ID'])) {
+            //     $data['UNIT_ID'] = $this->session->userdata('unit_id');
+            // }
+    		// if (!isset($data['TAHUN'])) {
+            //     $data['TAHUN'] = date('Y');
+            // }
+            // if (!isset($data['STATUS_DOKUMEN_ID'])) {
+            //     $data['STATUS_DOKUMEN_ID'] = 1;
+            // }
+
+            $data['createdBy']    = $this->session->userdata('auth_user');
+            //$data['CreatedDate'] = date('Y-m-d H:i:s');
+            $this->db->insert('tr_frr01',$data);
+           // $result = parent::insertRist1($data);
+
+            // if($result){
+            //    return $this->db->insert_id();
+            // }else{
+            //     return $result;
+            // }
+    	}
+
+        function getsequnce(){
+            // $last_row=$this->db->select('sequence')->order_by('sequence',"desc")->limit(1)->get('tr_worksheet_header')->row();
+            // return $last_row ;
+            $this->db->select('sequence');
+		$this->db->from('tr_worksheet_header');
+		$this->db->order_by('sequence', 'DESC');
+		$this->db->limit(1);
+
+		return $this->db->get()->row()->sequence+1;
+
         }
     }
 ?>

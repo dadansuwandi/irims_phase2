@@ -77,6 +77,8 @@ Top Risk <small>Integrated Risk Management System (IRIMS)</small>
 		</a>
 	</div>
 	<?php endif;?>
+	
+	
 
 	<?php if($this->session->userdata('role_id')==GROUP_ADMINISTRATOR || $this->session->userdata('role_id')==GROUP_RISK_ADMIN):?>
 	<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -250,116 +252,110 @@ Top Risk <small>Integrated Risk Management System (IRIMS)</small>
 			</p>
 		</div>
 	</div>
-	<div class="col-md-6">
+	
+	<!-- <?php echo $this->session->userdata('role_id') ;?> -->
+
+	<div class="col-md-4">
 		<div class="portlet box blue">
 			<div class="portlet-title">
 				<div class="caption">
 					<i class="fa fa-table"></i>Risk List
 				</div>
-				<!-- <div class="tools">
-					<a href="javascript:;" class="collapse">
-					</a>
-					<a href="#portlet-config" data-toggle="modal" class="config">
-					</a>
-					<a href="javascript:;" class="reload">
-					</a>
-					<a href="" class="fullscreen">
-					</a>
-					<a href="javascript:;" class="remove">
-					</a>
-				</div> -->
+				
 			</div>
 			<div class="portlet-body">
-				<table class="table table-hover">
+				<table id='tblList' class="table table-hover">
 				<thead>
 				<tr>
 					<th>
 						NO
 					</th>
 					<th>
-						NAMA RISIKO
+						Risk Name
 					</th>
 					<th>
-						K
+						Score 
 					</th>
 					<th>
-						D
+						Trend
 					</th>
 				</tr>
 				</thead>
-				<tbody>
-					<?php
-					$i = 0;
-					foreach ($rows as $row):
-						$i++;
-						?>
-						<tr>
-							<td><?php echo $i; ?></td>
-							<td><font color="blue" onclick="showEventLeader(<?php echo $row['RiskItemiId']?>);"><?php echo $row['Description']; ?></font></td>
-							<td><span class="label label-primary"><?php echo $row['RiskProbability']; ?></span></td>
-							<td><span class="label label-primary"><?php echo $row['RiskImpact']; ?></span></td>
-						</tr>
-					<?php endforeach; ?>
-				</tbody>
+				
 				</table>
 			</div>
 		</div>
 		<!-- END SAMPLE TABLE PORTLET-->
 	</div>
+	
+	<div class="col-md-4">
+
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-table"></i>Control Performance
+				</div>
+				
+			</div>
+			<div class="portlet-body">
+			<canvas id="pie-chart"></canvas>
+   
+			</div>
+		</div>
+		<!-- END SAMPLE TABLE PORTLET-->
+	</div>
+	<div class="col-md-4">
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-table"></i>Open Issues
+				</div>
+				
+			</div>
+			<div class="portlet-body">
+			<canvas id="pie-chart-issue"></canvas>
+			</div>
+		</div>
+		<!-- END SAMPLE TABLE PORTLET-->
+	</div>
+</div>
+<div class="row">
+	
+	
 	<div class="col-md-6">
-		<!-- BEGIN BORDERED TABLE PORTLET-->
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-table"></i>Risk by Category
+				</div>
+				
+			</div>
+			<div class="portlet-body">
+			<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+			</div>
+		</div>
+		<!-- END SAMPLE TABLE PORTLET-->
+	</div>
+	
+	<div class="col-md-6">
+	
 		<div class="portlet box yellow">
 			<div class="portlet-title">
 				<div class="caption">
 					<i class="fa fa-bar-chart-o"></i>Risk Map
 				</div>
-				<!-- <div class="tools">
-					<a href="javascript:;" class="collapse">
-					</a>
-					<a href="#portlet-config" data-toggle="modal" class="config">
-					</a>
-					<a href="javascript:;" class="reload">
-					</a>
-					<a href="" class="fullscreen">
-					</a>
-					<a href="javascript:;" class="remove">
-					</a>
-				</div> -->
+				
 			</div>
-			<div class="portlet-body" style="height: 525px;">
-				<!-- BEGIN MAP MATRIX-->
-				<!--
-				<div ng-app="myApp">
-				    <div ng-controller="myCtrl">
-				    -->
-				        <!-- <div style="width:300px;"> -->
-				        <!--
-				        <div style="width:29vw;">
-				            <risk-matrix data="data.risks" impact="data.impactValues" probability="data.probabilityValues" template="data.riskTemplate"></risk-matrix>
-				        </div>
-				        <div class="my-data">
-				            <div ng-repeat="r in data.risks | orderBy:'Id'">
-				            -->
-				                <!--
-				                <span ng-bind="'Risk: '+r.Id"></span>
-				                <select ng-model="r.RiskImpact" ng-options="o as o for o in data.impactValues"></select>
-				                <select ng-model="r.RiskProbability" ng-options="o as o for o in data.probabilityValues"></select>
-				            	-->
-				            	<!--
-				            </div>
-				        </div>
-				    </div>
-				</div>
-			-->
-				<!-- END MAP MATRIX-->
-				<!-- BEGIN RISK CHART-->
-				<!-- id div wajib diberi nama risk-chart-d3 -->
-				<div id="risk-chart-d3" style="height: 500px; width:500px;"></div><!-- widht dan height bisa diatur sesuai kebutuhan, bisa memakai % -->
+		
+				
+				
+				<div id="risk-chart-d3" style="height: 40%; width:50%;"></div>
+				<!-- widht dan height bisa diatur sesuai kebutuhan, bisa memakai % -->
 				<?php
 				$i = 1;
 				$tmp = array();
 				foreach ($rows as $row):
-					//echo var_dump(count($rows));
+					
 					$keyRisk 					= strtoupper($row['RiskProbability'].$row['RiskImpact']);
 					$keyRiskId					= $i;
 					$keyRiskName				= $row['Description'];
@@ -369,20 +365,145 @@ Top Risk <small>Integrated Risk Management System (IRIMS)</small>
 
 				$output = array();
 				foreach ($tmp as $keyRisk => $keyRiskId):
-					//$output[] = array('keyRiskName' => $keyRisk, 'keyRiskId' => $keyRiskId);
 					$output[$keyRisk] = $keyRiskId;
 				endforeach;
 				?>
 				<script>
-					drawRiskChart(<?php echo json_encode($output)?>);
+					 drawRiskChart(<?php echo json_encode($output)?>);
 				</script>
-				<div id="risk-chart-d3-temp" style="height: 500px; width:500px;"><canvas id="printCanvas"></canvas></div>
-				<!-- END RISK CHART-->
-			</div>
-		</div>
+				
+				
+			
+		</div> 
+
 		<!-- END BORDERED TABLE PORTLET-->
 	</div>
+	
 </div>
+<hr/>
+
+
+<div class="row">
+	<div class="row margin-bottom-20">
+		<div class="col-md-12">
+			<p align="center">
+				<font size="5"><b>Data</b></font> <br>
+				
+			</p>
+		</div>
+	</div>
+	
+	
+
+	<div class="col-md-4">
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-table"></i>Inherit Risk By Period
+				</div>
+				
+			</div>
+			<div class="portlet-body">
+				<div id="chartInherit" style="height: 300px;width:100%">
+				</div>	
+			</div>
+		</div>
+		<!-- END SAMPLE TABLE PORTLET-->
+	</div>
+	
+	<div class="col-md-4">
+
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-table"></i>Residual Risk By Period
+				</div>
+				
+			</div>
+			<div class="portlet-body">
+			
+			<div id="chartResidual" style="height: 300px;width:100%">
+			</div>
+			</div>
+		</div>
+		<!-- END SAMPLE TABLE PORTLET-->
+	</div>
+	<div class="col-md-4">
+
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-table"></i>Risk Kategory By Total Risk Rating
+				</div>
+				
+			</div>
+			<div class="portlet-body">
+			<canvas id="pie-chart-risk-category"></canvas>
+			</div>
+		</div>
+		<!-- END SAMPLE TABLE PORTLET-->
+	</div>
+	
+</div>
+<div class="row">
+	
+	
+	<div class="col-md-6">
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-table"></i>Control Rate By Period
+				</div>
+				
+			</div>
+			<div class="portlet-body">
+			<div id="chartControlRate" style="height: 370px; width: 100%;"></div>
+			</div>
+		</div>
+		<!-- END SAMPLE TABLE PORTLET-->
+	</div>
+	
+	<div class="col-md-6">
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-table"></i>Residual Risk Heat Map
+				</div>
+				
+			</div>
+			<div class="portlet-body">
+			<div id="risk-chart-residual" style="height: 500px; width:500px;"></div><!-- widht dan height bisa diatur sesuai kebutuhan, bisa memakai % -->
+			</div>
+		<?php
+			/*sample data dari backend*/ 
+			$data = array(
+				'3E'=>array('1','5','9'),//isi arraynya adalah nomor risknya, key array wajib capital contoh 3E,2D,5C
+				'2D'=>array('4','6','12'),
+				'5C'=>array('3','8','10','11'),
+				'1B'=>array('2','7','13'),
+				'5B'=>array('14','15','16'),
+				'3A'=>array('17','18','19')
+			);
+		?>
+
+		<script type="text/javascript" src="d3.min.js"></script>
+		<script type="text/javascript" src="residual.js"></script>
+		<script>
+			drawRiskChart1(<?php echo json_encode($data)?>);
+		</script>
+			</div>
+		</div>
+		<!-- END SAMPLE TABLE PORTLET-->
+	</div>
+	
+</div>
+	
+	
+	
+
+
+
+	
 
 <div class="clearfix">
 </div>
@@ -687,243 +808,12 @@ Top Risk <small>Integrated Risk Management System (IRIMS)</small>
 <?php endif;?>
 
 <?php if($this->session->userdata('role_id')==GROUP_ADMINISTRATOR || $this->session->userdata('role_id')==GROUP_RISK_ADMIN || $this->session->userdata('role_id')==GROUP_RISK_BOD || $this->session->userdata('role_id')==GROUP_RISK_LEADERS):?>
-<div class="row">
-	<!-- BEGIN TOP RISK REGISTER DATATABLE -->
-	<div class="col-md-6 col-sm-6">
-		<!-- BEGIN PORTLET-->
-		<div class="portlet light ">
-			<div class="portlet-title">
-				<div class="caption">
-					<span class="caption-subject font-blue-steel bold uppercase">TOP 10</span>
-					<span class="caption-helper">Corporate Risk</span>
-				</div>
-				<div class="tools">
-					<!-- <a href="javascript:;" class="collapse"></a>
-					<a href="#portlet-config" data-toggle="modal" class="config"></a>
-					<a href="javascript:;" class="reload"></a>
-					<a href="javascript:;" class="remove"></a> -->
-					<a href="javascript:;" class="fullscreen"></a>
-				</div>
-			</div>
-			<div class="portlet-body" style="height: 535px;">
-				<!-- BEGIN CONDENSED TABLE PORTLET-->
-				<div>
-					<table class="table table-condensed table-hover table-scrollable table-responsive" style="v-align:middle !important">
-					<thead>
-					<tr>
-						<th>
-							No
-						</th>
-						<th>
-							Risk Register
-						</th>
-						<th>
-							Risk Number
-						</th>
-						<th>
-							Risk Level
-						</th>
-						<th>
-							Trend
-						</th>
-					</tr>
-					</thead>
-					<tbody>
-					<?php if(count($top_risk)>0){?>
-					<?php $i_top = 1; foreach($top_risk as $risk_item_id=>$val){?>
-					<tr>
-						<td>
-							<?php echo $i_top++;?>
-						</td>
-						<td>
-							<font color="blue" onclick="showEvent(<?php echo $risk_item_id;?>)"><?php echo $val['data']->risk_item_name?></font>
-						</td>
-						<td>
-							<?php echo $val['data']->risk_item_number?>
-						</td>
-						<td>
-							<?php echo $val['data']->level_name?>
-						</td>
-						<td>
-							<img src="<?php echo base_url() ?>assets/img/risk_icon/<?php echo $val['icon']?>" class="" alt="">
-						</td>
-					</tr>
-					<?php if($i_top>10){break;}}?>
-					<?php }?>
-					</tbody>
-					</table>
-					
-					<div style="text-align:center;">
-						<a href="#" class="label label-success" onclick="modal_top_all();">Show All</a>
-					</div>
-				</div>
-				<!-- END CONDENSED TABLE PORTLET-->
-			</div>
-		</div>
-		<!-- END PORTLET-->
-	</div>
-	<!-- END TOP RISK REGISTER DATATABLE -->
-	<!-- BEGIN RADAR CHART -->
-	<div class="col-md-6 col-sm-6">
-		<!-- BEGIN CHART PORTLET-->
-		<div class="portlet light bordered">
-			<div class="portlet-title tabbable-line">
-				<div class="caption">
-					<span class="caption-subject font-blue-steel bold">TOP RISK</span>
-					<span class="caption-helper">by Category</span>
-				</div>
-				<ul class="nav nav-tabs">
-					<li class="active"><a href="#tab_top_10" data-toggle="tab" aria-expanded="true">TOP 10</a></li>
-					<!-- <li class=""><a href="#tab_top_corporate" data-toggle="tab" aria-expanded="false">Corporate</a></li> -->
-				</ul>
-				<!-- <div class="tools">
-					<a href="javascript:;" class="collapse"></a>
-					<a href="#portlet-config" data-toggle="modal" class="config"></a>
-					<a href="javascript:;" class="reload"></a>
-					<a href="javascript:;" class="remove"></a>
-					<a href="javascript:;" class="fullscreen"></a>
-				</div> -->
-			</div>
-			<div class="portlet-body" style="height: 535px !important;text-align:center;">
-				<div class="tab-content">
-					<div class="tab-pane active" id="tab_top_10">
-						<div class="svg-container" style="font-size:10px !important;">
-							<svg version="1.1" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" id="svg-radar-top">
-								<!-- circle -->
-						        <circle cx="250" cy="250" r="200" fill="#51D14F"/>
-							    <circle cx="250" cy="250" r="150" fill="#72DAD7"/>
-							    <circle cx="250" cy="250" r="100" fill="#FFFF00"/>
-							    <circle cx="250" cy="250" r="50" fill="#FE0000"/>
 
-							    <!-- separator lines -->
-							    <line x1="250" y1="250" x2="450" y2="225" style="stroke:white;stroke-width:2" />
-							    <line x1="250" y1="250" x2="405" y2="405" style="stroke:white;stroke-width:2" />
-							    <line x1="250" y1="250" x2="180" y2="450" style="stroke:white;stroke-width:2" />
-								<line x1="250" y1="250" x2="45" y2="270" style="stroke:white;stroke-width:2" />
-							    <line x1="250" y1="250" x2="90" y2="90" style="stroke:white;stroke-width:2" />
-							    <line x1="250" y1="250" x2="315" y2="45" style="stroke:white;stroke-width:2" />
-							   	
-							   	<!-- radar legend -->
-							   	<text x="443" y="400" fill="black" transform="rotate(295, 413, 380)" style="font-weight:bold;font-size:13px;" opacity="0.9">RISIKO K3L</text>
-							    <text x="260" y="475" fill="black" transform="rotate(-15, 270, 505)" style="font-weight:bold;font-size:13px;" opacity="0.9">RISIKO KEUANGAN</text>
-							    <text x="33" y="335" fill="black" transform="rotate(55, 47, 305)" style="font-weight:bold;font-size:13px;" opacity="0.9">RISIKO HUKUM & KEPATUHAN</text>
-								<text x="34" y="220" fill="black" transform="rotate(290, 34, 220)" style="font-weight:bold;font-size:13px;" opacity="0.9">RISIKO BISNIS</text>
-							    <text x="145" y="60" fill="black" transform="rotate(343, 145, 60)" style="font-weight:bold;font-size:13px;" opacity="0.9">RISIKO STRATEGIS</text>
-							    <text x="385" y="80" fill="black" transform="rotate(53, 385, 80)" style="font-weight:bold;font-size:13px;" opacity="0.9">RISIKO OPERASIONAL</text>
-
-							    <!-- data point -->
-							   	<?php foreach($risk_radar_top_data as $rr){?> 
-							  	<g onclick="showEvent(<?php echo $rr['risk_item_id'];?>)">
-							    	<circle cx="<?php echo $rr['x']?>" cy="<?php echo $rr['y']?>" r="<?php echo $rr['radius']?>" fill="#000000" opacity="0.9"/>
-							    	<a><text x="<?php echo $rr['x_text']?>" y="<?php echo $rr['y_text']?>" fill="black"><?php echo $rr['number']?></text></a>
-								</g>
-							   	<?php }?> 				   
-							</svg>
-						</div>
-					</div>
-					<div class="tab-pane" id="tab_top_corporate">
-						<div class="svg-container">
-							<svg version="1.1" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" id="svg-radar">
-								<!-- circle -->
-						        <circle cx="250" cy="250" r="200" fill="#3FC380"/>
-							    <circle cx="250" cy="250" r="150" fill="#E9D460"/>
-							    <circle cx="250" cy="250" r="100" fill="#E87E04"/>
-							    <circle cx="250" cy="250" r="50" fill="#F03434"/>
-
-							    <!-- separator lines -->
-							    <line x1="250" y1="250" x2="450" y2="225" style="stroke:white;stroke-width:2" />
-							    <line x1="250" y1="250" x2="405" y2="405" style="stroke:white;stroke-width:2" />
-							    <line x1="250" y1="250" x2="180" y2="450" style="stroke:white;stroke-width:2" />
-								<line x1="250" y1="250" x2="45" y2="270" style="stroke:white;stroke-width:2" />
-							    <line x1="250" y1="250" x2="90" y2="90" style="stroke:white;stroke-width:2" />
-							    <line x1="250" y1="250" x2="315" y2="45" style="stroke:white;stroke-width:2" />
-							   	
-							   	<!-- radar legend -->
-							   	<text x="443" y="400" fill="black" transform="rotate(285, 443, 400)" style="font-weight:bold;font-size:13px;" opacity="0.9">SAFETY & SECURITY RISK</text>
-							    <text x="260" y="475" fill="black" transform="rotate(-10, 260, 475)" style="font-weight:bold;font-size:13px;" opacity="0.9">FINANCE RISK</text>
-							    <text x="33" y="335" fill="black" transform="rotate(55, 33, 335)" style="font-weight:bold;font-size:13px;" opacity="0.9">COMPLIANCE RISK</text>
-								<text x="34" y="220" fill="black" transform="rotate(290, 34, 220)" style="font-weight:bold;font-size:13px;" opacity="0.9">BUSINESS RISK</text>
-							    <text x="145" y="60" fill="black" transform="rotate(343, 145, 60)" style="font-weight:bold;font-size:13px;" opacity="0.9">STRATEGIC RISK</text>
-							    <text x="385" y="80" fill="black" transform="rotate(53, 385, 80)" style="font-weight:bold;font-size:13px;" opacity="0.9">OPERATION RISK</text>
-
-							    <!-- data point -->
-							   	<?php foreach($risk_radar as $rr){?> 
-							   	<g onclick="open_info('<?php echo $rr['level']?>','<?php echo $rr['alias']?>')">
-							    	<circle cx="<?php echo $rr['x']?>" cy="<?php echo $rr['y']?>" r="<?php echo $rr['radius']?>" fill="#000000" opacity="0.9"/>
-							    	<a><text x="<?php echo $rr['x_text']?>" y="<?php echo $rr['y_text']?>" fill="black"><?php echo $rr['count']?>n</text></a>
-								</g>
-							   	<?php }?> 				   
-							</svg>
-						</div>
-						<div style="text-align:center; font-weight:bold">
-							<a href="#">n = Total Risiko</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- END CHART PORTLET-->
-	</div>
-	<!-- END RADAR CHART -->
-</div>
 <div class="clearfix">
 </div>
 
-<?php if($this->session->userdata('role_id')!=GROUP_RISK_ADMIN):?>
-<div class="row">
-	<div class="col-md-6 col-sm-6">
-		<div class="portlet light ">
-			<div class="portlet-title">
-				<div class="caption">
-					<i class="icon-share font-blue-steel hide"></i>
-					<span class="caption-subject font-blue-steel bold uppercase">Risk</span>
-					<span class="caption-helper">by Directorate</span>
-				</div>
-				<div class="tools">
-					<!-- <a href="javascript:;" class="collapse"></a>
-					<a href="#portlet-config" data-toggle="modal" class="config"></a>
-					<a href="javascript:;" class="reload"></a>
-					<a href="javascript:;" class="remove"></a> -->
-					<a href="javascript:;" class="fullscreen"></a>
-				</div>
-			</div>
-			<div class="portlet-body">
-				<div class="task-content">
-					<div class="scroller" style="width:100%;height:305px;" id="risk_directorate_pie"></div>
-				</div>
-				<div class="summary_directorate_pie" style="text-align:center;"></div>
-				<div style="font-weight:bold; text-align:center !important;">(On Monitor)</div>
-			</div>
-		</div>
-	</div>
 
-	<div class="col-md-6 col-sm-6">
-		<div class="portlet light ">
-			<div class="portlet-title">
-				<div class="caption">
-					<i class="icon-share font-blue-steel hide"></i>
-					<span class="caption-subject font-blue-steel bold uppercase">Risk</span>
-					<span class="caption-helper">by Factors</span>
-				</div>
-				<div class="tools">
-					<!-- <a href="javascript:;" class="collapse"></a>
-					<a href="#portlet-config" data-toggle="modal" class="config"></a>
-					<a href="javascript:;" class="reload"></a>
-					<a href="javascript:;" class="remove"></a> -->
-					<a href="javascript:;" class="fullscreen"></a>
-				</div>
-			</div>
-			<div class="portlet-body">
-				<div class="task-content">
-					<div class="scroller" style="height: 305px;" id="risk_function_pie"></div>
-				</div>
-				<div class="summary_function_pie" style="text-align:center;"></div>
-				<div style="font-weight:bold; text-align:center !important;">(On Monitor)</div>
-			</div>
-		</div>
-	</div>
-</div>
-<?php endif;?>
+
 
 <div class="clearfix">
 </div>
@@ -1154,10 +1044,7 @@ Top Risk <small>Integrated Risk Management System (IRIMS)</small>
 					<span class="caption-helper">By Area</span>
 				</div>
 				<div class="tools">
-					<!-- <a href="javascript:;" class="collapse"></a>
-					<a href="#portlet-config" data-toggle="modal" class="config"></a>
-					<a href="javascript:;" class="reload"></a>
-					<a href="javascript:;" class="remove"></a> -->
+					
 					<a href="javascript:;" class="fullscreen"></a>
 				</div>
 			</div>
@@ -1645,7 +1532,8 @@ Top Risk <small>Integrated Risk Management System (IRIMS)</small>
 
 <!-- <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyBUUz2XJq_rXW81MBvAfp84ld_AQPMvE4k"></script> -->
 <!-- <script src="<?php //echo base_url() ?>assets/global/plugins/MarkerWithLabel.js"></script> -->
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 <script type="text/javascript">
 var global_unit_id;
 function show_monitoring(unit_id)
@@ -2000,6 +1888,48 @@ $(document).ready(function () {
 		var url = "<?php echo site_url('welcome/index_corporate_worksheet').'?tahun='; ?>"+$(this).val();
 		window.location.replace(url);
 	});
+	
+	//get Risk list
+
+	var tabled = $('#tblList').DataTable({
+		
+		"aoColumns": [
+		{ "mDataProp" : "No"},
+        { "mDataProp" : "RiskName",},
+		{ "mDataProp" : "Score"},
+		{ "mDataProp" : "Trend"}
+        ]
+      
+    });
+	$.ajax({
+			url: "<?php echo site_url('welcome/welcome/getRiskList');?>",
+			method: 'post',
+			success:function(data){				
+			 var keys = (data == '' ? [] : jQuery.parseJSON(data));
+			
+			var dtRisk = new Object();
+			var up = '<?php echo site_url('assets/img/arrow/Arrows-Up-Right-icon.png');?>'
+			var down = '<?php echo site_url('assets/img/arrow/arrow-down-right-16-icon.png');?>'
+			var plate = '<?php echo site_url('assets/img/arrow/Arrows-Right-icon.png');?>'
+			
+			//var up  = base_url() + 'assets/img/arrow/rise.png';
+			for (var i = 0; i < keys.length; i++) {
+					 dtRisk.No = i+1;
+					 dtRisk.RiskName = keys[i]['RiskName'];
+					 dtRisk.Score = keys[i]['Score'];
+					 if (keys[i]['Score']=="High")
+						dtRisk.Trend ="<img width='25' height='25'src='"+ up +"'>" ;
+					if (keys[i]['Score']=="Low")
+						dtRisk.Trend ="<img width='25' height='25'src='"+ down +"'>" ;
+					if (keys[i]['Score']=="Medium")
+						dtRisk.Trend ="<img width='25' height='25'src='"+ plate +"'>" ;
+					$('#tblList').dataTable().fnAddData(dtRisk);
+				}
+        }		
+			
+     });
+
+	
 
 	/* $("#status_select").on('change', function(){
 		var url = "<?php //echo site_url('welcome').'?tahun='; ?>"+$('#tahun_laporan_select').val()+"<?php //echo '&stat='; ?>"+$(this).val();
@@ -2035,4 +1965,276 @@ $(document).ready(function () {
 	});
 	//End JQuery V Map
 });
+
+<?php
+ 
+$dataPoints1 = array( 
+	array("label" => "Facebook",  "y" => 50 ),
+	array("label" => "YouTube", "y" => 28 ),
+	array("label" => "Google+", "y" => 25 ),
+	array("label" => "Twitter",  "y" => 27 ),
+	array("label" => "Instagram", "y" => 24 ),
+	array("label" => "Tumblr",  "y" => 15 ),
+	array("label" => "LinkedIn",  "y" => 13 ),
+	array("label" => "Pinterest",  "y" => 14 )
+);
+ 
+$dataPoints2 = array( 
+	array("label" => "Facebook",  "y" => 25 ),
+	array("label" => "YouTube", "y" => 30 ),
+	array("label" => "Google+", "y" => 28 ),
+	array("label" => "Twitter",  "y" => 24 ),
+	array("label" => "Instagram", "y" => 23 ),
+	array("label" => "Tumblr",  "y" => 18 ),
+	array("label" => "LinkedIn",  "y" => 22 ),
+	array("label" => "Pinterest",  "y" => 20 )
+);
+ 
+$dataPoints3 = array( 
+	array("label" => "Facebook",  "y" => 13 ),
+	array("label" => "YouTube", "y" => 25 ),
+	array("label" => "Google+", "y" => 22 ),
+	array("label" => "Twitter",  "y" => 24 ),
+	array("label" => "Instagram", "y" => 23 ),
+	array("label" => "Tumblr",  "y" => 22 ),
+	array("label" => "LinkedIn",  "y" => 30 ),
+	array("label" => "Pinterest",  "y" => 23 )
+);
+ 
+
+ 
+?>
+   
+        new Chart(document.getElementById("pie-chart"), {
+        	type : 'pie',
+        	data : {
+        		labels : [ "Overdue", "Open", "Effect-Medium", "Effect-low",
+        				"Effective","Effect-High" ],
+        		datasets : [ {
+        			backgroundColor : [ "#ff6347", 
+        					"#0000ff","#ffa500", "#F8F106", "#66cdaa","#0000ff","#0000" ],
+        			data : [ 418, 263, 434, 586, 332,233 ]
+        		} ]
+        	},
+        	options : {
+        		title : {
+        			display : true,
+        			text : 'Chart JS Pie Chart Example'
+        		}
+        	}
+        });
+		new Chart(document.getElementById("pie-chart-risk-category"), {
+        	type : 'pie',
+        	data : {
+        		labels : [ "Overdue", "Open", "Effect-Medium", "Effect-low",
+        				"Effective","Effect-High" ],
+        		datasets : [ {
+        			backgroundColor : [ "#ff6347", 
+        					"#0000ff","#ffa500", "#F8F106", "#66cdaa","#0000ff","#0000" ],
+        			data : [ 418, 263, 434, 586, 332,233 ]
+        		} ]
+        	},
+        	options : {
+        		title : {
+        			display : true,
+        			text : 'Chart JS Pie Chart Example'
+        		}
+        	}
+        });
+		
+
+
+		new Chart(document.getElementById("pie-chart-issue"), {
+        	type : 'pie',
+        	data : {
+        		labels : [ "Lion", "Horse", "Elephant", "Tiger",
+        				"Jaguar" ],
+        		datasets : [ {
+        			backgroundColor : [ "#51EAEA", "#FCDDB0",
+        					"#FF9D76", "#FB3569", "#82CD47" ],
+        			data : [ 418, 263, 434, 586, 332 ]
+        		} ]
+        	},
+        	options : {
+        		title : {
+        			display : true,
+        			text : 'Chart JS Pie Chart Example'
+        		}
+        	}
+        });
+		//bar  stck
+
+		CanvasJS.addColorSet("customColorSet1",
+                [//colorSet Array
+
+                "#ff6347",
+                "#F8F106",
+                "#82CD47"
+                            
+                ]);
+	var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	colorSet:  "customColorSet1",
+	title: {
+		text: ""
+	},
+	toolTip: {
+		shared: true
+	},
+	axisY: {
+		title: "Percentage of Users",
+		suffix: "%"
+	},
+	data: [{
+		type: "stackedBar100",
+		name: "More than Once a day",
+		yValueFormatString: "#,##0\"%\"",
+		dataPoints: <?php echo json_encode($dataPoints1, JSON_NUMERIC_CHECK); ?>
+	},{
+		type: "stackedBar100",
+		yValueFormatString: "#,##0\"%\"",
+		name: "Daily",
+		dataPoints: <?php echo json_encode($dataPoints2, JSON_NUMERIC_CHECK); ?>
+	},{
+		type: "stackedBar100",
+		yValueFormatString: "#,##0\"%\"",
+		name: "Weekly",
+		dataPoints: <?php echo json_encode($dataPoints3, JSON_NUMERIC_CHECK); ?>
+	}]
+});
+chart.render();
+
+var chartControlRate = new CanvasJS.Chart("chartControlRate",
+    {
+      title:{
+        text: "Olympic Medals of all Times (till 2012 Olympics)"
+      },
+      data: [
+      {
+        type: "bar",
+        dataPoints: [
+        { y: 198, label: "Italy"},
+        { y: 201, label: "China"},
+        { y: 202, label: "France"},
+        { y: 236, label: "Great Britain"},
+        { y: 395, label: "Soviet Union"},
+        { y: 957, label: "USA"}
+        ]
+      },
+      {
+         type: "bar",
+        dataPoints: [
+        {  y: 166, label: "Italy"},
+        {  y: 144, label: "China"},
+        {  y: 223, label: "France"},
+        {  y: 272, label: "Great Britain"},
+        {  y: 319, label: "Soviet Union"},
+        {  y: 759, label: "USA"}
+        ]
+      },
+      {
+         type: "bar",
+        dataPoints: [
+        {  y: 185, label: "Italy"},
+        {  y: 128, label: "China"},
+        {  y: 246, label: "France"},
+        {  y: 272, label: "Great Britain"},
+        {  y: 296, label: "Soviet Union"},
+        {  y: 666, label: "USA"}
+        ]
+      }
+      ]
+    });
+
+	chartControlRate.render();
+
+	var chartInherit = new CanvasJS.Chart("chartInherit",
+    {
+      title:{
+        text: "Olympic Medals of all Times (till 2012 Olympics)"
+      },
+      data: [
+      {
+        // type: "bar",
+        dataPoints: [
+        { x:1,y: 198, label: "Italy"},
+        { x:2,y: 201, label: "China"},
+        { x:3,y: 202, label: "France"},
+        { x:4,y: 236, label: "Great Britain"},
+        { x:5,y: 395, label: "Soviet Union"},
+        { x:6,y: 957, label: "USA"}
+        ]
+      },
+      {
+        // type: "bar",
+        dataPoints: [
+        {  x:1,y: 166, label: "Italy"},
+        {  x:2,y: 144, label: "China"},
+        {  x:3,y: 223, label: "France"},
+        {  x:4,y: 272, label: "Great Britain"},
+        {  x:5,y: 319, label: "Soviet Union"},
+        {  x:6,y: 759, label: "USA"}
+        ]
+      },
+      {
+        // type: "bar",
+        dataPoints: [
+        {  x:1,y: 185, label: "Italy"},
+        {  x:2,y: 128, label: "China"},
+        {  x:3,y: 246, label: "France"},
+        {  x:4,y: 272, label: "Great Britain"},
+        {  x:5,y: 296, label: "Soviet Union"},
+        {  x:6,y: 666, label: "USA"}
+        ]
+      }
+      ]
+    });
+
+	chartInherit.render();
+
+
+	var chartResidual = new CanvasJS.Chart("chartResidual",
+    {
+      title:{
+        text: "Olympic Medals of all Times (till 2012 Olympics)"
+      },
+      data: [
+      {
+        // type: "bar",
+        dataPoints: [
+        { x:1,y: 198, label: "Italy"},
+        { x:2,y: 201, label: "China"},
+        { x:3,y: 202, label: "France"},
+        { x:4,y: 236, label: "Great Britain"},
+        { x:5,y: 395, label: "Soviet Union"},
+        { x:6,y: 957, label: "USA"}
+        ]
+      },
+      {
+        // type: "bar",
+        dataPoints: [
+        {  x:1,y: 166, label: "Italy"},
+        {  x:2,y: 144, label: "China"},
+        {  x:3,y: 223, label: "France"},
+        {  x:4,y: 272, label: "Great Britain"},
+        {  x:5,y: 319, label: "Soviet Union"},
+        {  x:6,y: 759, label: "USA"}
+        ]
+      },
+      {
+        // type: "bar",
+        dataPoints: [
+        {  x:1,y: 185, label: "Italy"},
+        {  x:2,y: 128, label: "China"},
+        {  x:3,y: 246, label: "France"},
+        {  x:4,y: 272, label: "Great Britain"},
+        {  x:5,y: 296, label: "Soviet Union"},
+        {  x:6,y: 666, label: "USA"}
+        ]
+      }
+      ]
+    });
+
+	chartResidual.render();
+	
 </script>

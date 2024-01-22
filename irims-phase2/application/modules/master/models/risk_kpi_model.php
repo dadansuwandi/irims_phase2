@@ -191,14 +191,14 @@ class risk_kpi_model extends MY_Model {
     }
 
     function drop_options_2() {
-        $query = $this->db->select('CONCAT("KPI ", '.',YEAR(created_date), '.', ": ", '.', name) AS name', FALSE)
+        $query = $this->db->select('id,CONCAT("KPI ", '.',YEAR(created_date), '.', ": ", '.', name) AS name', FALSE)
                 ->order_by('created_date', 'DESC')
                 ->get_where($this->table, array(
 				$this->table . '.status' => 1));
         $result = $query->result();
         $options[''] = '';
         foreach ($result as $item) {
-            $options[$item->name] = $item->name;
+            $options[$item->id] = $item->name;
         }
         return $options;
     }

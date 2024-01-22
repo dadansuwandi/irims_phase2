@@ -652,7 +652,8 @@ Risk Assessment Form
 												<div class="col-md-6">
 													<div class="input-group">
 														<span class="input-group-addon input-circle-left"><i class="fa fa-calendar"></i></span>
-														<input type="text" class="form-control input-circle-right date-picker" data-date-format="yyyy-mm-dd" name="MULAI_WAKTU[]" value="<?php //echo !empty($MULAI_WAKTU) ? $MULAI_WAKTU : ''; ?>" data-required="1"/>
+														<input type="text" class="form-control input-circle-right date-picker" data-date-format="yyyy-mm-dd" name="MULAI_WAKTU" value="<?php echo !empty($MULAI_WAKTU) ? $MULAI_WAKTU : ''; ?>" data-required="1"/>
+														<!-- <input type="text" class="form-control date-picker" data-date-format="yyyy-mm-dd" id="start_date" data-required="1" value=<?php echo !empty($start_date) ? $start_date : ''; ?>/> -->
 													</div>
 												</div>
 											</div>
@@ -672,7 +673,7 @@ Risk Assessment Form
 												<div class="col-md-6">
 													<div class="input-group">
 														<span class="input-group-addon input-circle-left"><i class="fa fa-money"></i></span>
-														<input type="text" class="form-control input-circle-right format-rupiah" id="MITIGATION_COSTS[<?php echo '0' ?>]" name="MITIGATION_COSTS[]" value="<?php //echo !empty($MITIGATION_COSTS) ? "Rp. ".number_format($MITIGATION_COSTS,0,",",".") : ''; ?>" data-required="1"/>
+														<input type="text" class="form-control input-circle-right" id="MITIGATION_COSTS" name="MITIGATION_COSTS" value="<?php echo !empty($MITIGATION_COSTS) ? number_format($MITIGATION_COSTS,0,",",".") : ''; ?>" data-required="1"/>
 													</div>
 													<span class="help-block">Input format ( Rp. xxx.xxx.xxx )</span>
 												</div>
@@ -1087,9 +1088,9 @@ function informationdetail(title){
 						RISK_PIC_ID_K: {
 	                        required: true
 	                    },
-	                    PIC_UNIT_KERJA_ID: {
-	                        required: true
-	                    },
+	                    // PIC_UNIT_KERJA_ID: {
+	                    //     required: true
+	                    // },
 	                    MULAI_WAKTU: {
 	                        required: true
 	                    },
@@ -1173,8 +1174,8 @@ function informationdetail(title){
 	                //Metronic.scrollTo($('.page-title'));
 	            }
 
-	            var ajaxPostData = function(form, redirect,index){
-	            	$.blockUI();
+	            var ajaxPostData = function(form, redirect){
+	            	//$.blockUI();
 					
 	                $.ajax({
 	                    url: form.attr("action"),
@@ -1196,6 +1197,98 @@ function informationdetail(title){
 
 	                    },
 	                    error: function(jqXHR, textStatus, errorThrown) {
+	                       console.log(textStatus, errorThrown);
+	                    }
+	                });
+	            }
+
+				//
+				var ajaxPost1 = function(form, redirect){
+	            	$.blockUI();
+					//alert(form.serialize());
+	                $.ajax({
+	                    url: "<?php echo site_url('risk/risk_identification/SaveData');?>",
+	                    type: "post",
+	                    data: form.serialize(),
+	                    dataType  : 'json',
+	                    success: function (response) {
+							alert(response);
+	                        console.log(response);
+	                        if(response.status=="failed"){
+	                            return false;
+	                        }else{
+	                            $("#risk_identification_id").val(response.RISK_IDENTIFICATION_ID);
+
+	                            if(redirect){
+	                                window.location.href = redirect_url+"/"+response.RISK_IDENTIFICATION_ID;
+	                            }
+	                            $.unblockUI();
+	                        }         
+
+	                    },
+	                    error: function(jqXHR, textStatus, errorThrown) {
+							//alert(textStatus +'-' + errorThrown);
+	                       console.log(textStatus, errorThrown);
+	                    }
+	                });
+	            }
+				var ajaxPost2 = function(form, redirect){
+	            	//$.blockUI();
+					//alert(form.serialize());
+	                $.ajax({
+	                    url: "<?php echo site_url('risk/risk_identification/SaveData2');?>",
+	                    type: "post",
+	                    data: form.serialize(),
+	                    dataType  : 'json',
+	                    success: function (response) {
+							//alert(response);
+	                        console.log(response);
+	                        if(response.status=="failed"){
+	                            return false;
+	                        }else{
+	                            $("#risk_identification_id").val(response.RISK_IDENTIFICATION_ID);
+
+	                            if(redirect){
+	                                window.location.href = redirect_url+"/"+response.RISK_IDENTIFICATION_ID;
+	                            }
+	                            //$.unblockUI();
+	                        }  
+							$.unblockUI();       
+
+	                    },
+	                    error: function(jqXHR, textStatus, errorThrown) {
+							alert(textStatus +'-' + errorThrown);
+	                       console.log(textStatus, errorThrown);
+						   $.unblockUI();
+	                    }
+	                });
+	            }
+
+				var ajaxPost3 = function(form, redirect){
+	            	//$.blockUI();
+					alert(form.serialize());
+	                $.ajax({
+	                    url: "<?php echo site_url('risk/risk_identification/SaveData3');?>",
+	                    type: "post",
+	                    data: form.serialize(),
+	                    dataType  : 'json',
+	                    success: function (response) {
+							alert(response);
+	                        console.log(response);
+	                        if(response.status=="failed"){
+	                            return false;
+	                        }else{
+	                            $("#risk_identification_id").val(response.RISK_IDENTIFICATION_ID);
+
+	                            if(redirect){
+	                                window.location.href = redirect_url+"/"+response.RISK_IDENTIFICATION_ID;
+	                            }
+	                            $.unblockUI();
+	                        }         
+
+	                    },
+	                    error: function(jqXHR, textStatus, errorThrown) {
+							//alert(textStatus +'-' + errorThrown);
 	                       console.log(textStatus, errorThrown);
 	                    }
 	                });
@@ -1226,6 +1319,7 @@ function informationdetail(title){
 							$('#tab3 .wysihtml5').each(function() {
         						$(this).rules('remove');
     						});
+							ajaxPost1(form, false);
 						}
 						
 						if (index == 2){
@@ -1238,6 +1332,7 @@ function informationdetail(title){
 							$('#tab3 .wysihtml5').each(function() {
         						$(this).rules('remove');
     						});
+							ajaxPost2(form, false);
 						}
 						if (index == 3){
 							$('#tab3 .wysihtml5').each(function() {
@@ -1245,6 +1340,16 @@ function informationdetail(title){
             					required: true,
         						});
     						});
+							$('#tab3 .wysihtml5').each(function() {
+        						$(this).rules('remove');
+    						});
+							ajaxPost3(form, false);
+
+							
+						}
+						if (index == 4){
+							
+							ajaxPost1(form, false);
 
 							
 						}
@@ -1252,8 +1357,8 @@ function informationdetail(title){
 	                    if (form.valid() == false) {
 	                        return false;
 	                    }
-
-	                    ajaxPostData(form, false,index);
+                        //if (index == )
+	                   // ajaxPostData(form, false,index);
 	                    handleTitle(tab, navigation, index);
 	                },
 	                onPrevious: function (tab, navigation, index) {
@@ -1274,7 +1379,7 @@ function informationdetail(title){
 
 	            $('#form_wizard_1').find('.button-previous').hide();
 	            $('#form_wizard_1 .button-submit').click(function () {
-	                ajaxPostData(form, true,index);
+	                ajaxPostData(form, true);
 	            }).hide();
 
 	            //apply validation on select2 dropdown value change, this only needed for chosen dropdown integration.
