@@ -127,9 +127,10 @@ Role Maping <small><?php echo $this->config->item('page_title'); ?></small>
 							<div class="col-md-9">
 
 							<select class="form-control  chosen-select" id="menu_id" name="menu_id" required>
-									<?php foreach($menu as $key=>$val): ?>
+									
+							<?php foreach($menu as $key=>$val): ?>
 									<?php if($key==$menu_id) { ?>
-									<option value="<?php echo !empty($key) ? $key : ''; ?>" selected="selected"><?php echo !empty($val) ? $val : ''; ?></option>
+									<option value="<?php echo !empty($key) ? $key : ''; ?>" selected="selected"><?php echo !empty($val) ? $val : 'None'; ?></option>
 									<?php } else { ?>
 									<option value="<?php echo !empty($key) ? $key : ''; ?>"><?php echo !empty($val) ? $val : ''; ?></option>
 									<?php } ?>
@@ -145,7 +146,7 @@ Role Maping <small><?php echo $this->config->item('page_title'); ?></small>
 							<div class="col-md-offset-2 col-md-9">
 								<button type="submit" class="btn green" id="save-button" value="Save" name="save-button">Save</button>
 								<!--<button type="submit" class="btn default" id="cancel-button" value="Cancel" name="cancel-button">Cancel</button>-->
-								<a href="<?php echo site_url('auth/role_map/index'); ?>" title="View" class="btn default">Cancel</i></a>
+								<a href="<?php echo site_url('auth/menu_role_assigment/index'); ?>" title="View" class="btn default">Cancel</i></a>
 							</div>
 						</div>
 					</div>
@@ -162,6 +163,15 @@ Role Maping <small><?php echo $this->config->item('page_title'); ?></small>
 	var url = $(location).attr('href');
 	var redirect_url     = <?php echo json_encode(base_url()); ?>;
 	var isUpdate= false;
+
+
+	$("select[name=menu_id]").attr("multiple","multiple");
+		$('select[name=menu_id]').select2({
+                allowClear: true,
+				//multiple: true;
+                //data: Select2DataTable(get_role_list, 'name', 'id', '')
+				//data: dddddd
+        })
 	
 	if (url.match("view"))
 		$('#save-button').hide();
@@ -178,7 +188,10 @@ Role Maping <small><?php echo $this->config->item('page_title'); ?></small>
 		
 		var role_id = $("#role_id").val();
 		var menu_id = $("#menu_id").val();
+		var arrd = menu_id.toString().split(',');
+		//alert(arrd[]);
 		
+
 			if (isUpdate == true){
 				$.ajax({
 							url: "<?php echo site_url('auth/menu_role_assigment/update');?>",
@@ -197,18 +210,31 @@ Role Maping <small><?php echo $this->config->item('page_title'); ?></small>
 			else
 			{
 
+			$.each(arrd,function(i){
+					
+			if (arrd[i] !=''){
+					
 				$.ajax({
 							url: "<?php echo site_url('auth/menu_role_assigment/save');?>",
 							method: 'post',
-							data: {role_id:  role_id,menu_id:menu_id},
+							data: {role_id:  role_id,menu_id:arrd[i]},
 							success:function(data){
-								window.location.href =redirect_url+"auth/menu_role_assigment/index";
+								
 							
 							},
 							error: function(xhr){
 								alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
-							}
+							},
+							complete: function(data) {
+								window.location.href =redirect_url+"auth/menu_role_assigment/index";
+        
+      						} //EINDE complete
 						});
+			}
+					
+			});
+				
+
 			}
 		
 

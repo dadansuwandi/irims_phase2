@@ -24,6 +24,7 @@ class menu_role_assigment extends Admin_Controller
 		
 		$this->template->build('menu-role-assigment');
 		
+		
 	}
 	
 
@@ -94,11 +95,12 @@ class menu_role_assigment extends Admin_Controller
 		$this->data['menu']   = $this->drop_optionsMenu();
 		$this->template->build('menu-role-assigment-form');
 		
+		
 	}
 	function save()
 	{	
-		
-		//$query = $this->db->select('name,label_name')->from('risk_information_tooltips')->order_by('name')->get()->result();
+		//die($this->input->post('menu_id'));
+		$query = $this->db->select('name,label_name')->from('risk_information_tooltips')->order_by('name')->get()->result();
 		$data = array(
             'menuRoleId'=>$this->input->post('role_id'),
             'MenuId'=>$this->input->post('menu_id'),
@@ -106,7 +108,7 @@ class menu_role_assigment extends Admin_Controller
 
             );
             $this->db->insert('mst_role_assigment',$data);
-            //echo json_encode($data);
+           // echo json_encode($data);
 	}
 	function update()
 	{	
